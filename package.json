@@ -14,7 +14,7 @@
     "lint:fix": "eslint --ext .jsx --ext .js ./ --fix",
     "deploy": "npm run build && npm run export && firebase deploy",
     "deploy:frontend": "npm run build && npm run export && firebase deploy --only hosting",
-    "kill-emulators": "lsof -t -i:8080 -i:9000 | xargs kill -9"
+    "kill-emulators": "powershell -Command \"& {Get-NetTCPConnection -LocalPort 8080,9000 | ForEach-Object {Stop-Process -Id $_.OwningProcess -Force}}\""
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
