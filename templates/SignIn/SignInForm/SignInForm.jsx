@@ -23,7 +23,12 @@ import { setLoading } from '@/libs/redux/slices/authSlice';
 import { auth, firestore } from '@/libs/redux/store';
 import fetchUserData from '@/libs/redux/thunks/user';
 
+import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
+
 import AUTH_REGEX from '@/libs/regex/auth';
+
+// reCaptcha_site_key defined in the .env file
+const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 const DEFAULT_FORM_VALUES = {
   email: typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'user@test.com' : '',
@@ -53,6 +58,12 @@ const SignInForm = (props) => {
 
   const { handleOpenSnackBar } = useContext(AuthContext);
 
+  const [captchaToken, setCaptchaToken] = useState(null);
+
+  const handleCaptchaVerify = (token) => {
+    setCaptchaToken(token);
+  }
+  
   const handleSubmit = async (data) => {
     try {
       const { email, password } = data;
@@ -93,6 +104,16 @@ const SignInForm = (props) => {
         );
         return;
       }
+
+      // Check if the user has completed reCaptcha
+      if (!captchaToken){
+        alert('Please complete reCaptcha before proceeding');
+        return;
+      }
+
+      // Reset token to prevent reusing the expired token
+      setCaptchaToken(null);
+
 
       // If user is verified, redirect to home
       dispatch(setLoading(true));
@@ -159,6 +180,17 @@ const SignInForm = (props) => {
     );
   };
 
+  const renderReCaptcha = () => {
+    return (
+      <ReCaptchaComponent
+        siteKey={SITE_KEY}
+        action="signin"
+        onVerify={handleCaptchaVerify}
+      />
+    );
+  };
+
+
   return (
     <FormContainer
       defaultValues={DEFAULT_FORM_VALUES}
@@ -168,6 +200,8 @@ const SignInForm = (props) => {
         {renderEmailInput()}
         {renderPaswordInput()}
         {renderSubmitButton()}
+        {renderReCaptcha()}
+
       </Grid>
     </FormContainer>
   );

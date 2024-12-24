@@ -5,6 +5,8 @@ import { FormContainer } from 'react-hook-form-mui';
 
 import AuthTextField from '@/components/AuthTextField';
 
+import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
+
 import GradientOutlinedButton from '@/components/GradientOutlinedButton';
 
 import styles from './styles';
@@ -18,6 +20,9 @@ import { AuthContext } from '@/libs/providers/GlobalProvider';
 import AUTH_REGEX from '@/libs/regex/auth';
 import { signUp } from '@/libs/services/user/signUp';
 import { validatePassword } from '@/libs/utils/AuthUtils';
+
+// reCaptcha_site_key defined in the .env file
+const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 const DEFAULT_FORM_VALUES = {
   email: '',
@@ -71,11 +76,17 @@ const SignUpForm = (props) => {
 
   const { handleOpenSnackBar } = useContext(AuthContext);
 
+
+
   const { register, control, fieldStates } = useWatchFields(WATCH_FIELDS);
   const { email, fullName, password, reEnterPassword } = fieldStates;
 
   const passwordMatch = password.value === reEnterPassword.value;
 
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const handleCaptchaVerify = (token) => {
+    setCaptchaToken(token);
+  }
   const setReEnterPasswordStatus = () => {
     if (passwordMatch && password.valid && reEnterPassword.valid) {
       return VALIDATION_STATES.SUCCESS;
@@ -128,12 +139,22 @@ const SignUpForm = (props) => {
         });
         return;
       }
+      
     }
 
     const isPasswordValid = validatePassword(
       { reEnterPassword: reEnterPassword.value, password: password.value },
       setError
     );
+
+    // Check if the user has completed reCaptcha
+    if (!captchaToken){
+      alert('Please complete reCaptcha before proceeding');
+      return;
+    }
+
+    // Reset token to prevent reusing the expired token
+    setCaptchaToken(null);
 
     if (isPasswordValid) {
       setLoading(true);
@@ -261,6 +282,17 @@ const SignUpForm = (props) => {
     );
   };
 
+
+  const renderReCaptcha = () => {
+    return (
+      <ReCaptchaComponent
+        siteKey={SITE_KEY}
+        action="signup"
+        onVerify={handleCaptchaVerify}
+      />
+    );
+  };
+
   return (
     <FormContainer defaultValues={DEFAULT_FORM_VALUES} onSuccess={handleSubmit}>
       <Grid {...sharedStyles.formGridProps}>
@@ -268,6 +300,7 @@ const SignUpForm = (props) => {
         {renderFullNameInput()}
         {renderPasswordAndConfirmPasswordInputs()}
         {renderSubmitButton()}
+        {renderReCaptcha()}
       </Grid>
     </FormContainer>
   );
