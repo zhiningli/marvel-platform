@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 
-import { Grid, Link, useTheme } from '@mui/material';
+import { Grid, Link, useTheme, Box, Typography } from '@mui/material';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 
 import AuthTextField from '@/components/AuthTextField';
 import GradientOutlinedButton from '@/components/GradientOutlinedButton';
+import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
 
 import styles from './styles';
 
@@ -64,6 +65,10 @@ const SignInForm = (props) => {
   const handleCaptchaVerify = (token) => {
     setCaptchaToken(token);
   }
+
+  const handleGoogleSubmit = () => {
+    alert("Not implemented yet");
+  };
 
   const handleSubmit = async (data) => {
     try {
@@ -178,17 +183,36 @@ const SignInForm = (props) => {
     );
   };
 
-  const renderSubmitButton = () => {
+  const renderSubmitButtonContainer = () => {
     return (
-      <GradientOutlinedButton
+      <Grid {...styles.submitButtonContainer}>
+
+        <GradientOutlinedButton
         bgcolor={theme.palette.Dark_Colors.Dark[1]}
         text="Sign In"
         textColor={theme.palette.Common.White['100p']}
         loading={signInLoading}
         {...styles.submitButtonProps}
-      />
+        />
+
+        <Grid {...styles.legendTypographyContainer}>
+          <Box {...styles.legendTypographyBox}/>
+            <legend {...styles.legendStyle}>
+              <Typography {...styles.typography}>Or</Typography>
+            </legend>
+            <Box {...styles.legendTypographyBox}/>
+        </Grid>
+
+
+        <GoogleSignInButton
+          googleSubmitText = "Sign in with Google"
+          handleGoogleSubmit={handleGoogleSubmit}
+          signInLoading={signInLoading}
+        />
+      </Grid>
     );
   };
+
 
   const renderReCaptcha = () => {
     return (
@@ -209,7 +233,7 @@ const SignInForm = (props) => {
       <Grid {...sharedStyles.formGridProps}>
         {renderEmailInput()}
         {renderPaswordInput()}
-        {renderSubmitButton()}
+        {renderSubmitButtonContainer()}
         {renderReCaptcha()}
 
       </Grid>
