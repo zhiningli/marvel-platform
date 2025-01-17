@@ -37,8 +37,8 @@ const useRedirect = (firestore, functions, handleOpenSnackBar) => {
 
     // Check if the current route is an authentication route
     const isAuthUrl = [
-      ROUTES.SIGNIN,
-      ROUTES.SIGNUP,
+      // ROUTES.SIGNIN,
+      // ROUTES.SIGNUP,
       ROUTES.PRIVACY,
       ROUTES.TERMS,
       ROUTES.PASSWORD_RESET,
