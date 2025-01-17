@@ -24,3 +24,9 @@ module.exports = {
   /* Migration Scripts - For running  */
   ...migrationScripts,
 };
+
+
+const functions = require("firebase-functions");
+const { validateCaptcha } = require("./recaptcha/recaptchaController");
+
+exports.validateCaptcha = functions.https.onRequest(validateCaptcha);

@@ -106,14 +106,13 @@ const SignInForm = (props) => {
       }
 
       // Check if the user has completed reCaptcha
-      if (!captchaToken){
-        alert('Please complete reCaptcha before proceeding');
+      if (!captchaToken) {
+        alert("Please complete reCAPTCHA.");
         return;
       }
-
+      
       // Reset token to prevent reusing the expired token
       setCaptchaToken(null);
-
 
       // If user is verified, redirect to home
       dispatch(setLoading(true));
