@@ -38,7 +38,7 @@ const styles = {
       },
     },
   },
-  submitButtonProps: {
+  signInButtonProps: {
     type: 'submit',
     color: 'purple4',
     inverted: true,
@@ -62,7 +62,7 @@ const styles = {
 
   },
 
-  legendTypographyContainer: {
+  seperatorContainer: {
     item: true,
     display: "flex", 
     flexDirection: "row", 
@@ -73,7 +73,7 @@ const styles = {
       height: "20px", 
     },
   },
-  legendTypographyBox: {
+  seperatorBox: {
     component: "fieldset",
     sx: {
       flex: 1, 

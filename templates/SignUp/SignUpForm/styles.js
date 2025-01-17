@@ -5,7 +5,7 @@ const styles = {
     extraProps: {
       padding: '2px',
       height: { laptop: '54px', desktopMedium: '60px' },
-      width: '60%',
+      width: '100%',
     },
     extraButtonProps: {
       fontFamily: 'Satoshi Bold',

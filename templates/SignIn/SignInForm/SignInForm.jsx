@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { Grid, Link, useTheme, Box, Typography } from '@mui/material';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup ,signOut } from 'firebase/auth';
 import { useRouter } from 'next/router';
 
 import { FormContainer } from 'react-hook-form-mui';
@@ -188,21 +188,20 @@ const SignInForm = (props) => {
       <Grid {...styles.submitButtonContainer}>
 
         <GradientOutlinedButton
-        bgcolor={theme.palette.Dark_Colors.Dark[1]}
-        text="Sign In"
-        textColor={theme.palette.Common.White['100p']}
-        loading={signInLoading}
-        {...styles.submitButtonProps}
+          bgcolor={theme.palette.Dark_Colors.Dark[1]}
+          text="Sign In"
+          textColor={theme.palette.Common.White['100p']}
+          loading={signInLoading}
+          {...styles.signInButtonProps}
         />
 
-        <Grid {...styles.legendTypographyContainer}>
-          <Box {...styles.legendTypographyBox}/>
+        <Grid {...styles.seperatorContainer}>
+          <Box {...styles.seperatorBox}/>
             <legend {...styles.legendStyle}>
               <Typography {...styles.typography}>Or</Typography>
             </legend>
-            <Box {...styles.legendTypographyBox}/>
+            <Box {...styles.seperatorBox}/>
         </Grid>
-
 
         <GoogleSignInButton
           googleSubmitText = "Sign in with Google"
