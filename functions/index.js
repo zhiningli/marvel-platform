@@ -18,7 +18,7 @@ const migrationScripts = {};
 module.exports = {
   /* Authenticaition */
   signUpUser: userController.signUpUser,
-  recaptchaVerifier: reCaptchaController.verifyRecaptcha,
+  recaptchaVerifier: reCaptchaController.verifyRecaptchaResponse,
 
   /* Marvel AI */
   chat: marvelAIController.chat,
