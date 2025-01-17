@@ -21,8 +21,15 @@ import useWatchFields from '@/libs/hooks/useWatchFields';
 import { AuthContext } from '@/libs/providers/GlobalProvider';
 import AUTH_REGEX from '@/libs/regex/auth';
 
-import { signUp } from '@/libs/services/user/signUp';
+import { signUp, signUpWithGoogle } from '@/libs/services/user/signUp';
 import { validatePassword } from '@/libs/utils/AuthUtils';
+
+import { signOut } from 'firebase/auth';
+import { auth, firestore } from '@/libs/firebase/firebaseSetup';
+import { useDispatch} from 'react-redux';
+import fetchUserData from '@/libs/redux/thunks/user';
+import { useRouter } from 'next/router';
+import ROUTES from "@/libs/constants/routes";
 
 // reCaptcha_site_key defined in the .env file
 const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
@@ -70,6 +77,10 @@ const WATCH_FIELDS = [
  * @return {JSX.Element} Returns Sign-Up Form.
  */
 const SignUpForm = (props) => {
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+  
   const { step, setStep, setEmail, handleSwitch } = props;
 
   const theme = useTheme();
@@ -78,7 +89,6 @@ const SignUpForm = (props) => {
   const [loading, setLoading] = useState(false);
 
   const { handleOpenSnackBar } = useContext(AuthContext);
-
 
 
   const { register, control, fieldStates } = useWatchFields(WATCH_FIELDS);
@@ -143,7 +153,16 @@ const SignUpForm = (props) => {
         return;
       }
       
+      await signUp(email.value, password.value, fullName.value);
+      handleOpenSnackBar(
+        ALERT_COLORS.SUCCESS,
+        'Account created successfully'
+      );
+
+      setEmail(email.value);
     }
+
+
 
     const isPasswordValid = validatePassword(
       { reEnterPassword: reEnterPassword.value, password: password.value },
@@ -180,8 +199,42 @@ const SignUpForm = (props) => {
   };
 
   const handleGoogleSubmit = async () => {
-    alert("Not implemented yet");
-  };
+    try {
+      const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
+      await verifyCaptcha(captchaToken, apiUrl);
+      setCaptchaToken(null);
+    } catch (error) {
+      handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await signUpWithGoogle();
+      console.log("sign up information from google: ", data);
+
+      if (data){
+        handleOpenSnackBar(ALERT_COLORS.SUCCESS, 'Signed up is successful');
+      }
+
+      const userData = await dispatch(
+        fetchUserData({ firestore, id: data.user.uid })
+      ).unwrap();
+
+      console.log("data from the firestore: ",userData);
+
+      if (userData?.needsBoarding){
+        router.replace(ROUTES.BOARDING);
+      } else {
+        router.replace(ROUTES.HOME);
+      }
+    } catch (error) {
+
+      setLoading(false);
+      router.replace(ROUTES.SIGNUP);
+      handleOpenSnackBar(ALERT_COLORS.ERROR, "A problem has occured, please try again later.");
+      }
+    };
 
   const renderEmailInput = () => {
     if (step !== AUTH_STEPS.EMAIL) {

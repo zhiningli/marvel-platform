@@ -1,8 +1,6 @@
 const { https } = require('firebase-functions/v1');
 const axios = require('axios');
-const cors = require('cors')({
-  origin: ['http://localhost:3000'], // Restrict origins
-});
+const corsMiddleware = require('../corsMiddleware'); // Import the centralized CORS middleware
 
 /**
  * Verifies a reCAPTCHA token using the Google reCAPTCHA API.
@@ -12,7 +10,7 @@ const cors = require('cors')({
  * @returns {Object} The verification result.
  */
 exports.verifyRecaptchaResponse = https.onRequest((req, res) => {
-  cors(req, res, async () => {
+  corsMiddleware(req, res, async () => {
     try {
       const { captchaToken } = req.body;
 

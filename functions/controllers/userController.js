@@ -12,28 +12,37 @@ const { https } = require('firebase-functions/v1');
  * @param {string} data.uid - The unique identifier for the user.
  * @param {Object} context - The context object containing information about the authenticated user.
  * @returns {Promise<Object>} A promise that resolves to an object indicating the success of the operation.
- * @returns {string} return.status - The status of the operation ('success').
- * @returns {string} return.message - A message describing the result of the operation.
- * @throws {https.HttpsError} If any of the required fields (email, fullName, uid) are missing in the data object.
  */
 exports.signUpUser = https.onCall(async (data, context) => {
-  const { email, fullName, uid } = data;
+  try {
+    const { email, fullName, uid } = data;
 
-  if (!email || !fullName || !uid) {
+    if (!email || !fullName || !uid) {
+      throw new https.HttpsError(
+        'failed-precondition',
+        'Please provide all required fields (email, fullName, uid).'
+      );
+    }
+
+    const userRef = admin.firestore().collection('users').doc(uid);
+    const userDoc = {
+      id: uid,
+      email,
+      fullName,
+      needsBoarding: true,
+    };
+
+    await userRef.set(userDoc);
+
+    return {
+      status: 'success',
+      message: 'User document created successfully',
+    };
+  } catch (error) {
+    console.error('Error in signUpUser:', error);
     throw new https.HttpsError(
-      'failed-precondition',
-      'Please provide all required fields'
+      'internal',
+      'An error occurred while creating the user document.'
     );
   }
-
-  const userRef = admin.firestore().collection('users').doc(uid);
-  const userDoc = {
-    id: uid,
-    email,
-    fullName,
-    needsBoarding: true,
-  };
-
-  await userRef.set(userDoc);
-  return { status: 'success', message: 'User document created successfully' };
 });
