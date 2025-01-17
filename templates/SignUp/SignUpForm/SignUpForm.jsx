@@ -6,7 +6,7 @@ import { FormContainer } from 'react-hook-form-mui';
 import AuthTextField from '@/components/AuthTextField';
 
 import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
-import { verifyRecaptcha } from '@/libs/utils/verifyRecaptcha';
+import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
 
 import GradientOutlinedButton from '@/components/GradientOutlinedButton';
 
@@ -78,7 +78,7 @@ const SignUpForm = (props) => {
   const { handleOpenSnackBar } = useContext(AuthContext);
 
 
-  
+
   const { register, control, fieldStates } = useWatchFields(WATCH_FIELDS);
   const { email, fullName, password, reEnterPassword } = fieldStates;
 
@@ -150,7 +150,7 @@ const SignUpForm = (props) => {
 
     try {
       const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
-      await verifyRecaptcha(captchaToken, apiUrl);
+      await verifyCaptcha(captchaToken, apiUrl);
       setCaptchaToken(null);
     } catch (error) {
       handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);

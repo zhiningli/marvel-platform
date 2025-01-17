@@ -16,16 +16,16 @@ export async function verifyCaptcha(captchaToken, apiUrl, threshold = 0.7) {
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ captchaToken }), // Correct key for the backend
+        body: JSON.stringify({ captchaToken }),
       });
   
       const { success, score, message } = await response.json();
-  
+      console.log('reCAPTCHA verification result:', { success, score, message });
       if (!success || score < threshold) {
         throw new Error(message || 'Suspicious activity detected. Please try again.');
       }
   
-      return { success, score };
+      return { success, score, message };
     } catch (error) {
       throw new Error(error.message || 'An error occurred during reCAPTCHA verification.');
     }
