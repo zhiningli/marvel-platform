@@ -24,6 +24,7 @@ import { auth, firestore } from '@/libs/redux/store';
 import fetchUserData from '@/libs/redux/thunks/user';
 
 import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
+import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
 
 import AUTH_REGEX from '@/libs/regex/auth';
 
@@ -63,7 +64,7 @@ const SignInForm = (props) => {
   const handleCaptchaVerify = (token) => {
     setCaptchaToken(token);
   }
-  
+
   const handleSubmit = async (data) => {
     try {
       const { email, password } = data;
@@ -88,6 +89,16 @@ const SignInForm = (props) => {
       // Check if password is entered
       if (!password) {
         setError({ password: { message: 'Password is required' } });
+        return;
+      }
+
+      // Verify reCAPTCHA
+      try {
+        const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
+        await verifyCaptcha(captchaToken, apiUrl);
+        setCaptchaToken(null);
+      } catch (error) {
+        handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
         return;
       }
 
