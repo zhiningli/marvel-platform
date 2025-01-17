@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react';
 
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Box, Typography, useTheme } from '@mui/material';
 import { FormContainer } from 'react-hook-form-mui';
 
 import AuthTextField from '@/components/AuthTextField';
+import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButton';
 
 import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
 import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
@@ -19,6 +20,7 @@ import ALERT_COLORS from '@/libs/constants/notification';
 import useWatchFields from '@/libs/hooks/useWatchFields';
 import { AuthContext } from '@/libs/providers/GlobalProvider';
 import AUTH_REGEX from '@/libs/regex/auth';
+
 import { signUp } from '@/libs/services/user/signUp';
 import { validatePassword } from '@/libs/utils/AuthUtils';
 
@@ -177,6 +179,10 @@ const SignUpForm = (props) => {
     }
   };
 
+  const handleGoogleSubmit = async () => {
+    alert("Not implemented yet");
+  };
+
   const renderEmailInput = () => {
     if (step !== AUTH_STEPS.EMAIL) {
       return null;
@@ -283,6 +289,36 @@ const SignUpForm = (props) => {
     );
   };
 
+  const renderSubmitButtonContainer = () => {
+    return (
+      <Grid {...styles.submitButtonContainer}>
+
+        <GradientOutlinedButton
+          bgcolor={theme.palette.Dark_Colors.Dark[1]}
+          loading={step === AUTH_STEPS.PASSWORD && loading}
+          textColor={theme.palette.Common.White['100p']}
+          clickHandler={handleSubmit}
+          text={submitButtonText()}
+          {...styles.submitButtonProps}
+        />
+
+        <Grid {...styles.seperatorContainer}>
+          <Box {...styles.seperatorBox}/>
+            <legend {...styles.legendStyle}>
+              <Typography {...styles.typography}>Or</Typography>
+            </legend>
+            <Box {...styles.seperatorBox}/>
+        </Grid>
+
+        <GoogleSignInButton
+          googleSubmitText = "Sign up using Google"
+          handleGoogleSubmit={handleGoogleSubmit}
+          signInLoading={loading}
+        />
+      </Grid>
+    );
+  };
+
 
   const renderReCaptcha = () => {
     return (
@@ -300,7 +336,7 @@ const SignUpForm = (props) => {
         {renderEmailInput()}
         {renderFullNameInput()}
         {renderPasswordAndConfirmPasswordInputs()}
-        {renderSubmitButton()}
+        {renderSubmitButtonContainer()}
         {renderReCaptcha()}
       </Grid>
     </FormContainer>

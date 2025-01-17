@@ -1,3 +1,5 @@
+import { GoogleAuthProvider } from "firebase/auth";
+
 // paste your firebase config object here
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_API_KEY,
@@ -7,6 +9,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
+
+const googleAuthProvider = new GoogleAuthProvider();
+
+export { googleAuthProvider };
 
 // stop editing below this
 export default firebaseConfig;

@@ -28,6 +28,7 @@ import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacCompon
 import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
 
 import AUTH_REGEX from '@/libs/regex/auth';
+import { googleAuthProvider } from '@/libs/firebase/config';
 
 // reCaptcha_site_key defined in the .env file
 const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
@@ -65,10 +66,6 @@ const SignInForm = (props) => {
   const handleCaptchaVerify = (token) => {
     setCaptchaToken(token);
   }
-
-  const handleGoogleSubmit = () => {
-    alert("Not implemented yet");
-  };
 
   const handleSubmit = async (data) => {
     try {
@@ -144,6 +141,48 @@ const SignInForm = (props) => {
       setError({ password: { message: AUTH_ERROR_MESSAGES[code] } });
     } finally {
       setSignInLoading(false);
+    }
+  };
+
+  const handleGoogleSubmit = async () => {
+    
+    // Verify reCAPTCHA
+    try {
+      const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
+      await verifyCaptcha(captchaToken, apiUrl);
+      setCaptchaToken(null);
+    } catch (error) {
+      handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
+      return;
+    }
+    
+    setSignInLoading(true);
+
+    try {
+      const data = await signInWithPopup(auth, googleAuthProvider);
+      console.log("data from google auth provider: ",data);
+
+      if (data) {
+        handleOpenSnackBar(ALERT_COLORS.SUCCESS, 'Signed in successfully');
+      };
+
+      const userData = await dispatch(
+        fetchUserData({ firestore, id: data.user.uid })
+      ).unwrap();
+
+      console.log("data from the firestore: ",userData);
+
+      setSignInLoading(false);
+    } catch (error) {
+      
+      console.error(error);
+
+      setSignInLoading(false);
+      signOut(auth);
+      router.replace(ROUTES.SIGNIN);
+      handleOpenSnackBar(
+        ALERT_COLORS.ERROR, 
+        "An error occured. Please try again later");
     }
   };
 
