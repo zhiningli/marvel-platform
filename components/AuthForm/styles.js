@@ -2,18 +2,19 @@ const styles = {
   mainGridProps: {
     container: true,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    rowGap: { laptop: 4, desktop: 5, desktopMedium: 8 },
+    rowGap: { laptop: 4, desktop: 5, desktopMedium: 5 },
     height: '100%',
+    mt: 4,
   },
   formGridProps: {
     container: true,
     item: true,
     justifyContent: 'center',
     alignItems: 'center',
-    rowGap: 4,
-    px: { laptop: 10, desktop: 12, desktopMedium: 14 },
+    rowGap: 1,
+    px: { laptop: 10, desktop: 12, desktopMedium: 12 },
     sx: {
       '& form': {
         width: '100%',
@@ -112,7 +113,6 @@ const styles = {
     alignItems: 'center',
     sx: (theme) => ({
       borderTop: `1px solid ${theme.palette.Greyscale[100]}`,
-      paddingTop: '14px',
       fontSize: '12px',
       [theme.breakpoints.down('mobile')]: {
         fontSize: '10px',
