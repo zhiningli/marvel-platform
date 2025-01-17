@@ -4,9 +4,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    rowGap: { laptop: 4, desktop: 5, desktopMedium: 5 },
     height: '100%',
-    mt: 4,
   },
   formGridProps: {
     container: true,
@@ -16,6 +14,7 @@ const styles = {
     rowGap: 1,
     px: { laptop: 10, desktop: 12, desktopMedium: 12 },
     sx: {
+      marginTop: '40px',
       '& form': {
         width: '100%',
       },
@@ -49,6 +48,8 @@ const styles = {
       mobileSmall: 1,
     },
     sx: (theme) => ({
+      marginTop: "40px",
+      height: '132px',
       '& a': {
         textUnderlineOffset: '4px',
         textDecoration: 'underline 2px',
@@ -112,8 +113,12 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     sx: (theme) => ({
+      marginBottom: "10px",
+      height: '37px',
       borderTop: `1px solid ${theme.palette.Greyscale[100]}`,
       fontSize: '12px',
+      marginTop: 'auto', 
+      width: '100%',
       [theme.breakpoints.down('mobile')]: {
         fontSize: '10px',
       },

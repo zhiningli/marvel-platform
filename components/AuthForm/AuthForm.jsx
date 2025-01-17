@@ -41,12 +41,19 @@ const AuthForm = (props) => {
   const renderPolicyInfo = () => {
     return (
       <Grid {...styles.policyInfoGridConfig}>
-        <Typography {...styles.policyInfoTextConfig}>
-          This site is protected by reCAPTCHA and the Google
-        </Typography>
-        <Typography {...styles.linksConfig}>
-          Privacy Policy and Terms of Service apply.
-        </Typography>
+        <Grid
+         item
+         sx={{
+           marginTop: 'auto', // Push this content to the bottom
+         }}
+       >
+          <Typography {...styles.policyInfoTextConfig}>
+            This site is protected by reCAPTCHA and the Google
+          </Typography>
+          <Typography {...styles.linksConfig}>
+            Privacy Policy and Terms of Service apply.
+          </Typography>
+        </Grid>
       </Grid>
     );
   };
