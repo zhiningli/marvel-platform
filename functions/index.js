@@ -5,7 +5,7 @@ admin.initializeApp();
 
 const userController = require('./controllers/userController');
 const marvelAIController = require('./controllers/marvelAIController');
-const reCaptchaController = require('./controllers/recaptchaController');
+const recaptchaController = require('./controllers/recaptchaController');
 const { seedDatabase } = require('./cloud_db_seed');
 
 seedDatabase();
@@ -18,7 +18,7 @@ const migrationScripts = {};
 module.exports = {
   /* Authenticaition */
   signUpUser: userController.signUpUser,
-  recaptchaVerifier: reCaptchaController.verifyRecaptchaResponse,
+  recaptchaVerifier: recaptchaController.recaptchaVerifier,
 
   /* Marvel AI */
   chat: marvelAIController.chat,

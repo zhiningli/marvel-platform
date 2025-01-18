@@ -96,8 +96,7 @@ const SignInForm = (props) => {
 
       // Verify reCAPTCHA
       try {
-        const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
-        await verifyCaptcha(captchaToken, apiUrl);
+        await verifyCaptcha(captchaToken);
         setCaptchaToken(null);
       } catch (error) {
         handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
@@ -118,15 +117,6 @@ const SignInForm = (props) => {
         return;
       }
 
-      // Check if the user has completed reCaptcha
-      if (!captchaToken) {
-        alert("Please complete reCAPTCHA.");
-        return;
-      }
-      
-      // Reset token to prevent reusing the expired token
-      setCaptchaToken(null);
-
       // If user is verified, redirect to home
       dispatch(setLoading(true));
       const userData = await dispatch(
@@ -146,10 +136,8 @@ const SignInForm = (props) => {
 
   const handleGoogleSubmit = async () => {
     
-    // Verify reCAPTCHA
     try {
-      const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
-      await verifyCaptcha(captchaToken, apiUrl);
+      await verifyCaptcha(captchaToken);
       setCaptchaToken(null);
     } catch (error) {
       handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);

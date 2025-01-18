@@ -1,45 +1,43 @@
 const { https } = require('firebase-functions/v1');
 const axios = require('axios');
-const corsMiddleware = require('../corsMiddleware'); // Import the centralized CORS middleware
-
+const functions = require('firebase-functions');
 /**
  * Verifies a reCAPTCHA token using the Google reCAPTCHA API.
  *
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
+ * @param {Object} data - The data passed from the client.
+ * @param {string} data.captchaToken - The reCAPTCHA token to verify.
+ * @param {Object} context - The context object (contains Firebase Auth info if authenticated).
  * @returns {Object} The verification result.
  */
-exports.verifyRecaptchaResponse = https.onRequest((req, res) => {
-  corsMiddleware(req, res, async () => {
-    try {
-      const { captchaToken } = req.body;
+exports.recaptchaVerifier = https.onCall(async (data, context) => {
+  try {
+    const secretKey = functions.config().recaptcha.secret_key;
 
-      if (!captchaToken) {
-        return res.status(400).json({ success: false, message: 'Captcha token is missing' });
-      }
-
-      const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
-        params: {
-          secret: process.env.RECAPTCHA_SECRET_KEY,
-          response: captchaToken,
-        },
-      });
-
-      const { success, score, 'error-codes': errorCodes } = response.data;
-
-      if (!success) {
-        console.log('reCAPTCHA verification failed:', errorCodes);
-        return res.status(403).json({
-          success: false,
-          message: `reCAPTCHA verification failed: ${errorCodes?.join(', ') || 'Unknown error'}`,
-        });
-      }
-
-      console.log('reCAPTCHA verification successful. Score:', score);
-      return res.status(200).json({ success: true, score, message: 'reCAPTCHA verification successful' });
-    } catch (error) {
-      console.error('reCAPTCHA verification error:', error.message);
-      return res.status(500).json({ success: false, message: 'Internal server error' });
+    const { captchaToken } = data;
+    if (!captchaToken) {
+      throw new https.HttpsError('invalid-argument', 'Captcha token is missing.');
     }
-  });
+
+    const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+      params: {
+        secret: secretKey,
+        response: captchaToken,
+      },
+    });
+    const { success, score, 'error-codes': errorCodes } = response.data;
+
+    if (!success) {
+      console.error('reCAPTCHA verification failed:', errorCodes);
+      throw new https.HttpsError(
+        'permission-denied',
+        `reCAPTCHA verification failed: ${errorCodes?.join(', ') || 'Unknown error'}`
+      );
+    }
+
+    console.log('reCAPTCHA verification successful. Score:', score);
+    return { success: true, score, message: 'reCAPTCHA verification successful' };
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error.message);
+    throw new https.HttpsError('internal', 'An error occurred while verifying the reCAPTCHA token.');
+  }
 });
