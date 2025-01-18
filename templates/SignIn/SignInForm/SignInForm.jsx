@@ -131,6 +131,7 @@ const SignInForm = (props) => {
       setError({ password: { message: AUTH_ERROR_MESSAGES[code] } });
     } finally {
       setSignInLoading(false);
+      setCaptchaToken(null);
     }
   };
 

@@ -152,6 +152,14 @@ const SignUpForm = (props) => {
         });
         return;
       }
+
+      try {
+        await verifyCaptcha(captchaToken);
+        setCaptchaToken(null);
+      } catch (error) {
+        handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
+        return;
+      }
       
       await signUp(email.value, password.value, fullName.value);
       handleOpenSnackBar(
@@ -163,20 +171,10 @@ const SignUpForm = (props) => {
     }
 
 
-
     const isPasswordValid = validatePassword(
       { reEnterPassword: reEnterPassword.value, password: password.value },
       setError
     );
-
-    try {
-      const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
-      await verifyCaptcha(captchaToken, apiUrl);
-      setCaptchaToken(null);
-    } catch (error) {
-      handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
-      return;
-    }
 
     if (isPasswordValid) {
       setLoading(true);
@@ -194,14 +192,15 @@ const SignUpForm = (props) => {
         handleOpenSnackBar(ALERT_COLORS.ERROR, err.message);
       } finally {
         setLoading(false);
+        setCaptchaToken(null);
       }
     }
   };
 
   const handleGoogleSubmit = async () => {
+    // Verify reCAPTCHA
     try {
-      const apiUrl = 'http://127.0.0.1:5001/kai-platform-sandbox/us-central1/recaptchaVerifier';
-      await verifyCaptcha(captchaToken, apiUrl);
+      await verifyCaptcha(captchaToken);
       setCaptchaToken(null);
     } catch (error) {
       handleOpenSnackBar(ALERT_COLORS.ERROR, error.message);
