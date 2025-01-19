@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { Box, Card, Grid, useMediaQuery } from '@mui/material';
+import CookieBanner from '@/components/CookieBanner/CookieBanner';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
@@ -105,6 +106,7 @@ const AuthLayout = (props) => {
       {renderArtifacts()}
       {isAuthScreen && renderCard()}
       {!isAuthScreen && children}
+      <CookieBanner />
     </Grid>
   );
 };

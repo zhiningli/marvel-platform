@@ -9,6 +9,7 @@ import GoogleSignInButton from '@/components/GoogleSignInButton/GoogleSignInButt
 import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
 import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
 
+
 import GradientOutlinedButton from '@/components/GradientOutlinedButton';
 
 import styles from './styles';
@@ -254,8 +255,8 @@ const SignUpForm = (props) => {
         }
         state={email.status}
         control={control}
-        ref={register}
         focused
+        {...register('email')}
       />
     );
   };
@@ -279,8 +280,8 @@ const SignUpForm = (props) => {
         }
         state={fullName.status}
         control={control}
-        ref={register}
         focused
+        {...register('fullName')}
       />
     );
   };
@@ -303,7 +304,7 @@ const SignUpForm = (props) => {
           }
           state={password.status}
           control={control}
-          ref={register}
+          {...register('password')}
           isPasswordField
           focused
         />
@@ -320,24 +321,11 @@ const SignUpForm = (props) => {
           }
           state={setReEnterPasswordStatus()}
           control={control}
-          ref={register}
+          {...register('reEnterPassword')}
           isPasswordField
           focused
         />
       </>
-    );
-  };
-
-  const renderSubmitButton = () => {
-    return (
-      <GradientOutlinedButton
-        bgcolor={theme.palette.Dark_Colors.Dark[1]}
-        loading={step === AUTH_STEPS.PASSWORD && loading}
-        textColor={theme.palette.Common.White['100p']}
-        clickHandler={handleSubmit}
-        text={submitButtonText()}
-        {...styles.submitButtonProps}
-      />
     );
   };
 

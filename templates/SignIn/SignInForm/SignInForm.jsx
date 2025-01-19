@@ -26,6 +26,7 @@ import fetchUserData from '@/libs/redux/thunks/user';
 
 import ReCaptchaComponent from '@/components/ReCaptchaComponent/reCaptchacComponent';
 import { verifyCaptcha } from '@/libs/utils/ReCaptchaUtil';
+import CookieBanner from '@/components/CookieBanner/CookieBanner';
 
 import AUTH_REGEX from '@/libs/regex/auth';
 import { googleAuthProvider } from '@/libs/firebase/config';
